@@ -1,0 +1,11 @@
+.coverage
+*.egg-info/
+*.pyc
+/.tox
+/bin
+/build/
+/conf/ansible.yaml
+/dist/
+/include
+/lib
+/.env

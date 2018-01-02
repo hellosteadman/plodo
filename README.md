@@ -31,7 +31,7 @@ digitalocean:
 
 region: lon1 # The DigitalOcean region to create droplets and snapshots
 ssh_keys:
-    12345678: /path/to/keyfile # The ID of an sSH key stored within DigitalOcean, and the local path to the key file
+    12345678: /path/to/keyfile # The ID of an SSH key stored within DigitalOcean, and the local path to the key file
 
 ansible:
     playbook: ./ansible/production.yaml # The Ansible playbook to run
@@ -95,9 +95,11 @@ DO_API_TOKEN=abcdefghijklmnopqrstuvwxyz1234567890 # Your DigitalOcean API token
 
 To use it:
 
-    $ plodo --help
+```
+$ plodo --help
+```
 
-## Commands
+## Commands
 
 You can add the `--help` option to any command to display a list of options and arguments for that command.
 
@@ -111,7 +113,7 @@ The next time `plodo build` is run, it sues _that_ snapshot to create a new one,
 
 Once the snapshots are saved, the droplets used to create them are destroyed.
 
-#### Arguments
+#### Arguments
 
 Optionally specify a list of droplet groups (such as `web` or `worker`) that should be built. This is useful if you only need to rebuild a worker server's snapshot, for example.
 
@@ -125,7 +127,7 @@ This command spins up new droplets using the snapshots created in `plodo build`.
 
 Once the new droplets are in place, old droplets are removed (this is done in a different order depending on whether the servers are public-facing or not).
 
-#### Arguments
+#### Arguments
 
 Optionally specify a list of droplet groups (such as `web` or `worker`) that should be deployed. This is only really useful in situations where you quickly need to upload new code to a specific server group, as the end goal is to have all server groups running the same code.
 
@@ -133,7 +135,7 @@ Optionally specify a list of droplet groups (such as `web` or `worker`) that sho
 
 This command runs the Ansible playbook against a given DigitalOcean droplet. It's really a shortcut for quickly deploying code changes to a specific droplet, and was written to test and diagnose provisioning of droplets via Ansible.
 
-#### Arguments
+#### Arguments
 
 The first argument must be an Ansible tag. This tag is added to the `ansible-playbook` command.
 
@@ -143,7 +145,7 @@ The second argument is the ID to a DigitalOcean droplet.
 
 This command is used to scale a group of servers up or down. Plodo will then ensure the specified number of droplets are running, and either remove droplets no longer needed, or add new ones.
 
-### Arguments
+#### Arguments
 
 Specify the group name and a number in key-pair fashion, like so:
 

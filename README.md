@@ -149,6 +149,10 @@ This command is used to scale a group of servers up or down. Plodo will then ens
 
 Specify the group name and a number in key-pair fashion, like so:
 
+```sh
+$ plodo scale web=6 worker=2
+```
+
 ### `plodo shell`
 
 This command uses SSH to run an arbitrary command on the first server in a group, specified in the config.

@@ -159,9 +159,23 @@ This command uses SSH to run an arbitrary command on the first server in a group
 
 Because the tool was initially designed to deploy a Django app, my config uses an equivalent of `manage.py shell` to access the Django shell, so I can interact with models with one command, without ever needing to know the IP address of a server.
 
+### `plodo logs`
+
+This allows for the viewing or following of log files from a given group, or number of groups.
+
+#### Arguments
+
+Specify each group by name. The command runs `journalctl` (optionally with `-f`) on the necessary droplets, and pipes the output to the local console.
+
+#### Options
+
+- `-t`, `--tail`: Tail (or follow) the logs, otherwise the last 100 lines will be printed.
+
 ## Known issues
 
 - `plodo scale` has an issue where it incorrectly calculates the number of droplets it needs to create, when scaling to 1.
+
+- `plodo logs` is very primitive and doesn't exit cleanly. It just instantiates _n_ threads, where _n_ is the number of servers in each group, so it can simultaneously SSH into each server and pipe the output to the local console. This is not sustainable, but was hacked together quickly because I needed to see some logs and I was too cheap to increase my Papertrail storage.
 
 ## Support
 

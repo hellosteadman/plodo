@@ -9,11 +9,13 @@ def get_remote_logs(key_filename, *ips, tail=False):
                 'ssh',
                 'root@%s' % ip,
                 '-i', key_filename,
-                'journalctl'
+                'tail'
             ]
 
             if tail:
                 parts.append('-f')
+
+            parts.append('/var/log/*')
 
             proc = subprocess.Popen(parts)
             proc.wait()

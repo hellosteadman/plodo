@@ -8,8 +8,9 @@ from .logs import logs
 
 
 @click.group(invoke_without_command=True)
+@click.option('--rack', '-r', help='Rack to deploy to')
 @click.pass_context
-def main(ctx):
+def main(ctx, rack='production'):
     """Django project deployment tool for DigitalOcean"""
 
     if ctx.invoked_subcommand is None:

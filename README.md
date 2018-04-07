@@ -37,29 +37,37 @@ ansible:
     playbook: ./ansible/production.yaml # The Ansible playbook to run
     home: /var/app/ # The remote home directory for the app
 
-images: # A collection of arbitrary group names with configuration options
-    cron:
-        size: 512mb # The droplet size
-        base: ubuntu-16-04-x64 # The base image to use if running `plodo build` for the first time
-        monitoring: true # Enable monitoring for the droplet
-    worker:
-        size: 2gb
-        base: ubuntu-16-04-x64
-        monitoring: true
-    web:
-        size: 2gb
-        base: ubuntu-16-04-x64
-        monitoring: true
-        front: true # Denotes a public-facing droplet, which changes the order of how droplets are destroyed and created
+racks:
+    production: # The default production rack to deploy to
+        images: # A collection of arbitrary group names with configuration options
+            cron:
+                size: 512mb # The droplet size
+                base: ubuntu-16-04-x64 # The base image to use if running `plodo build` for the first time
+                monitoring: true # Enable monitoring for the droplet
+            worker:
+                size: 2gb
+                base: ubuntu-16-04-x64
+                monitoring: true
+            web:
+                size: 2gb
+                base: ubuntu-16-04-x64
+                monitoring: true
+                front: true # Denotes a public-facing droplet, which changes the order of how droplets are destroyed and created
 
-droplets: # The target number of droplets to deploy in each group
-    cron: 1
-    worker: 2
-    web: 5
+        droplets: # The target number of droplets to deploy in each group
+            cron: 1
+            worker: 2
+            web: 5
 
-load_balancer:
-    id: 725498b1-6553-4e88-9d14-e8812f9f591d # The ID of a DigitalOcean load balancer to add droplets to
-    group: web # The group whose droplets should be added to the load balancer
+        load_balancer:
+            id: 725498b1-6553-4e88-9d14-e8812f9f591d # The ID of a DigitalOcean load balancer to add droplets to
+            group: web # The group whose droplets should be added to the load balancer
+
+        ansible: # Overrides the Ansible options for this rack
+            ...
+
+    staging: # Further optional racks
+        ...
 
 shell:
     group: worker # The droplet group used to find servers that can run a shell command

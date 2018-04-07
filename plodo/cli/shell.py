@@ -1,18 +1,21 @@
 from ..digitalocean import DigitalOceanManager
-from .utils import get_config
+from .utils import get_config, get_rack
 import click
 import os
 import subprocess
 
 
 @click.command()
+@click.option('--rack', '-r', help='Rack to execute on', default='production')
 @click.pass_context
-def shell(ctx):
+def shell(ctx, rack='production'):
     """Access the Django shell of a worker server"""
     options = get_config(ctx)
     do_options = options.get('digitalocean', {})
     shell = options.get('shell', {})
     ssh_keys = options.get('ssh_keys')
+    rack_options = get_rack(ctx, options, rack)
+    tag = rack_options.get('tag') or rack
 
     if isinstance(ssh_keys, list):
         ssh_keys = {}
@@ -34,7 +37,7 @@ def shell(ctx):
     do_manager = DigitalOceanManager(**do_options)
     droplets = do_manager.get(
         'droplets',
-        tag_name='plodo-%s' % shell_group
+        tag_name='%s-%s' % (tag, shell_group)
     )
 
     for droplet in droplets['droplets']:
@@ -49,3 +52,5 @@ def shell(ctx):
             proc = subprocess.Popen(parts)
             proc.wait()
             return
+
+    ctx.fail('No droplet found in shell group')

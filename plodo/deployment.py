@@ -12,7 +12,14 @@ class DropletDeployer(DropletManagerBase):
         droplets={}, images={}, load_balancer={}, digitalocean={}, **kwargs
     ):
         super().__init__(
-            echo, prompt, region, ssh_keys, ansible, images, digitalocean
+            echo,
+            prompt,
+            region,
+            ssh_keys,
+            ansible,
+            images,
+            digitalocean,
+            rack=kwargs.get('rack', 'production')
         )
 
         if not isinstance(droplets, dict):
@@ -47,7 +54,7 @@ class DropletDeployer(DropletManagerBase):
     def get_current_droplets(self, group):
         droplets = self.do_manager.get(
             'droplets',
-            tag_name='plodo-%s' % group
+            tag_name='%s-%s' % (self.tag_name, group)
         )
 
         return droplets['droplets']
@@ -57,26 +64,30 @@ class DropletDeployer(DropletManagerBase):
             if any(groups) and group not in groups:
                 continue
 
+            permanent = self.images.get(group, {}).get('permanent', False)
             old_droplets = self.get_current_droplets(group)
             front = self.images.get(group, {}).get('front', False)
 
-            def destroy():
-                for droplet in old_droplets:
-                    self.echo(
-                        'Removing %s droplet %s.' % (
-                            group,
-                            droplet['id']
+            if not permanent:
+                def destroy():
+                    for droplet in old_droplets:
+                        self.echo(
+                            'Removing %s droplet %s.' % (
+                                group,
+                                droplet['id']
+                            )
                         )
-                    )
 
-                    self.shutdown(droplet['id'], delete=True)
+                        self.shutdown(droplet['id'], delete=True)
 
-            if not front:
-                destroy()
+                if not front:
+                    destroy()
 
-            droplets = self.scale_up(group, desired_count)
-            if front and droplets and any(droplets):
-                destroy()
+            gap = desired_count - len(old_droplets)
+            if gap > 0 or not permanent:
+                droplets = self.scale_up(group, desired_count)
+                if front and droplets and any(droplets):
+                    destroy()
 
     def scale(self, group, count):
         current_droplets = self.get_current_droplets(group)

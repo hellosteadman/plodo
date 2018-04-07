@@ -15,3 +15,11 @@ def get_config(ctx):
 
     if not isinstance(options, dict):
         ctx.fail('Config file invalid.')
+
+
+def get_rack(ctx, config, name):
+    rack = config.get('racks', {}).get(name)
+    if rack is None:
+        ctx.fail('Rack "%s" could not be found' % name)
+
+    return rack

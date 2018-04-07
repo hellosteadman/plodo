@@ -8,7 +8,7 @@ import sys
 
 
 IMAGE_NAME_REGEX = re.compile(
-    r'^([\w-]+)-(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$'
+    r'^([\w-]+)-([\w-]+)-(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$'
 )
 
 
@@ -19,10 +19,11 @@ class DropletError(Exception):
 class DropletManagerBase:
     def __init__(
         self, echo=None, prompt=None, region=None,
-        ssh_keys={}, ansible={}, images={}, digitalocean={}
+        ssh_keys={}, ansible={}, images={}, digitalocean={}, rack='production'
     ):
         self.echo = echo or (lambda s: sys.stdout.write('%s\n' % s))
         self.prompt = prompt
+        self.tag_name = rack
 
         if not region or not isinstance(region, str):
             raise TypeError('region must be a string')
@@ -54,6 +55,7 @@ class DropletManagerBase:
             match = IMAGE_NAME_REGEX.match(image['name'])
             if match is not None:
                 (
+                    match_rack,
                     match_tag,
                     match_year,
                     match_month,
@@ -62,6 +64,9 @@ class DropletManagerBase:
                     match_minute,
                     match_second
                 ) = match.groups()
+
+                if match_rack != self.tag_name:
+                    continue
 
                 if match_tag != tag:
                     continue
@@ -110,7 +115,7 @@ class DropletManagerBase:
                 backups=not not backups,
                 user_data=user_data or None,
                 monitoring=not not monitoring,
-                tags=['plodo-%s' % tag]
+                tags=['%s-%s' % (self.tag_name, tag)]
             )
         )
 
@@ -122,7 +127,8 @@ class DropletManagerBase:
             'droplets/%s/actions' % droplet_id,
             dict(
                 type='snapshot',
-                name='%s-%s' % (
+                name='%s-%s-%s' % (
+                    self.tag_name,
                     tag,
                     datetime.now().strftime('%Y%m%d%H%I%S')
                 )

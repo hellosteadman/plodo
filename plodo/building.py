@@ -10,9 +10,19 @@ class ImageError(Exception):
 class DropletBuilder(DropletManagerBase):
     def __init__(
         self, echo=None, prompt=None, region=None, ssh_keys={}, ansible={},
-        images={}, **kwargs
+        images={}, digitalocean={}, **kwargs
     ):
-        super().__init__(echo, prompt, region, ssh_keys, ansible, images)
+        super().__init__(
+            echo,
+            prompt,
+            region,
+            ssh_keys,
+            ansible,
+            images,
+            digitalocean,
+            rack=kwargs.get('rack', 'production')
+        )
+
         self._droplet_ids = {}
 
     def build(self, *groups):

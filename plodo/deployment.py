@@ -1,5 +1,6 @@
 from .droplets import DropletManagerBase
 from .provisioning import Provisioner
+import os
 
 
 class DeploymenetError(Exception):
@@ -37,9 +38,16 @@ class DropletDeployer(DropletManagerBase):
         try:
             self.load_balancer_id = load_balancer['id']
         except KeyError:
-            raise Exception(
-                'load_balancer.id is not defined'
+            self.load_balancer_id = os.getenv(
+                '%s_LOAD_BALANCER_ID' % kwargs.get(
+                    'rack', 'production'
+                ).upper()
             )
+
+            if self.load_balancer_id is None:
+                raise Exception(
+                    'load_balancer.id is not defined'
+                )
 
         try:
             self.load_balancer_group = load_balancer['group']

@@ -15,8 +15,7 @@ def get_remote_logs(key_filename, *ips, tail=False):
             if tail:
                 parts.append('-f')
 
-            parts.append('/var/log/*')
-
+            parts.append('/var/log/upstart/*.log')
             proc = subprocess.Popen(parts)
             proc.wait()
 

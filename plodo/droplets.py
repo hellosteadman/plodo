@@ -146,6 +146,19 @@ class DropletManagerBase:
 
             return
 
+        for tag in droplet['droplet']['tags']:
+            if tag.startswith('%s-' % self.tag_name):
+                t = tag.split('-')[1]
+                if t in self.images:
+                    if 'pre_shutdown' in self.images[t]:
+                        self.echo('Running pre-shutdown command')
+                        for key in self.ssh_keys.values():
+                            self.do_manager.run(
+                                droplet['droplet'],
+                                key,
+                                self.images[t]['pre_shutdown']
+                            )
+
         action = self.do_manager.post(
             'droplets/%s/actions' % droplet_id,
             dict(type='shutdown')

@@ -42,15 +42,7 @@ def shell(ctx, rack='production'):
 
     for droplet in droplets['droplets']:
         for key_id, key_filename in ssh_keys.items():
-            parts = [
-                'ssh',
-                'root@%s' % droplet['networks']['v4'][0]['ip_address'],
-                '-i', key_filename,
-                shell_command
-            ]
-
-            proc = subprocess.Popen(parts)
-            proc.wait()
+            do_manager.run(droplet, key_filename, shell_command)
             return
 
     ctx.fail('No droplet found in shell group')

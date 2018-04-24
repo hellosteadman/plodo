@@ -5,6 +5,7 @@ from .provision import provision
 from .scale import scale
 from .shell import shell
 from .logs import logs
+from .ls import ls
 
 
 @click.group(invoke_without_command=True)
@@ -23,3 +24,4 @@ main.add_command(provision)
 main.add_command(scale)
 main.add_command(shell)
 main.add_command(logs)
+main.add_command(ls)

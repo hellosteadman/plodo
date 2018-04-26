@@ -61,6 +61,16 @@ class DigitalOceanManager:
             response.raise_for_status()
             return True
 
+    def ssh(self, droplet, ssh_key):
+        parts = [
+            'ssh',
+            'root@%s' % droplet['networks']['v4'][0]['ip_address'],
+            '-i', ssh_key
+        ]
+
+        proc = subprocess.Popen(parts)
+        return proc.wait()
+
     def run(self, droplet, ssh_key, command):
         parts = [
             'ssh',

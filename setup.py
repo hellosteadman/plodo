@@ -7,7 +7,7 @@ dependencies = ['click', 'PyYAML', 'requests', 'ansible']
 
 setup(
     name='plodo',
-    version='0.1.2',
+    version='0.2',
     url='https://github.com/iamsteadman/plodo',
     license='BSD',
     author='Mark Steadman',

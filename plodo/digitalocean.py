@@ -64,6 +64,7 @@ class DigitalOceanManager:
     def ssh(self, droplet, ssh_key):
         parts = [
             'ssh',
+            '-o', 'StrictHostKeyChecking=no',
             'root@%s' % droplet['networks']['v4'][0]['ip_address'],
             '-i', ssh_key
         ]
@@ -74,6 +75,7 @@ class DigitalOceanManager:
     def run(self, droplet, ssh_key, command):
         parts = [
             'ssh',
+            '-o', 'StrictHostKeyChecking=no',
             'root@%s' % droplet['networks']['v4'][0]['ip_address'],
             '-i', ssh_key,
             command

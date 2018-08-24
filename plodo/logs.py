@@ -7,6 +7,7 @@ def get_remote_logs(key_filename, *ips, tail=False):
         def run():
             parts = [
                 'ssh',
+                '-o', 'StrictHostKeyChecking=no',
                 'root@%s' % ip,
                 '-i', key_filename,
                 'tail'
